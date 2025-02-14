@@ -1,11 +1,6 @@
 <template>
   <div class="chat-input-container">
     <div class="chat-input">
-      <select v-model="selectedModel" class="model-selector">
-        <option value="qwen-plus">qwen-plus</option>
-        <option value="qwen-max">qwen-max</option>
-        <option value="deepseek-v3">deepseek-v3</option>
-      </select>
       <textarea v-model="message" @keydown.enter.prevent="handleEnter" @input="adjustHeight" ref="textarea"
         placeholder="输入消息..." rows="1"></textarea>
       <button @click="send" :disabled="!message.trim()">
@@ -21,7 +16,6 @@
 import { defineEmits, ref } from "vue";
 
 const message = ref("");
-const selectedModel = ref("qwen-plus");
 const textarea = ref(null);
 const emit = defineEmits(["sendMessage"]);
 
@@ -40,7 +34,7 @@ const handleEnter = (e) => {
 
 const send = () => {
   if (message.value.trim()) {
-    emit("sendMessage", { message: message.value, model: selectedModel.value });
+    emit("sendMessage", message.value);
     message.value = "";
     if (textarea.value) {
       textarea.value.style.height = 'auto';
@@ -53,7 +47,7 @@ const send = () => {
 .chat-input-container {
   padding: 20px;
   background: var(--background-color);
-  border-top: 1px solid var(--border-color);
+  border-top: none;
   flex-shrink: 0;
 }
 
@@ -61,22 +55,23 @@ const send = () => {
   display: flex;
   max-width: 768px;
   margin: 0 auto;
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  align-items: flex-end;
+  background: #F9F9F9; 
+  border: 1px solid #E0E0E0; 
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  padding: 12px 20px;
 }
 
 .model-selector {
-  padding: 8px;
-  border: none;
-  background: var(--background-color);
+  padding: 8px 12px;
+  border: 1px solid #D1D1D1;
+  background: transparent;
   color: var(--text-color);
   font-size: 14px;
-  border-radius: 6px;
+  border-radius: 20px;
   outline: none;
-  margin: 6px;
+  margin-right: 10px;
   cursor: pointer;
 }
 
@@ -89,25 +84,26 @@ textarea {
   color: var(--text-color);
   font-size: 16px;
   line-height: 1.5;
-  max-height: 200px;
+  max-height: 150px;
   resize: none;
   font-family: inherit;
   overflow-y: auto;
+  border-radius: 20px;
 }
 
 textarea::placeholder {
-  color: #999;
+  color: #B0B0B0; 
 }
 
 button {
   padding: 8px 12px;
-  margin: 4px;
   background: var(--primary-color);
   border: none;
-  border-radius: 6px;
+  border-radius: 20px; 
   color: white;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin-left: 10px;
 }
 
 button:hover {

@@ -45,7 +45,7 @@ export const useChatStore = defineStore("chat", {
             return this.messages[sessionID];
         },
 
-        async sendChatRequest({ username, sessionID, message, model }) {
+        async sendChatRequest({ username, sessionID, message}) {
             if (!this.messages[sessionID]) {
                 this.messages[sessionID] = [];
             }
@@ -64,7 +64,7 @@ export const useChatStore = defineStore("chat", {
                         username: username,
                         session_id: sessionID,
                         query: message,
-                        model: model,
+                        model: "deepseek-v3",
                     })
                 });
 

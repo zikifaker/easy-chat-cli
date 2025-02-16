@@ -10,7 +10,10 @@ export const useUserStore = defineStore("user", {
     actions: {
         async login(username, password) {
             try {
-                const res = await api.post("/login", { username, password });
+                const res = await api.post("/login", { 
+                    username: username, 
+                    password: password, 
+                });
                 localStorage.setItem("username", username);
                 localStorage.setItem("token", res.data.token);
                 this.username = username;
@@ -25,7 +28,11 @@ export const useUserStore = defineStore("user", {
 
         async register(username, password, email) {
             try {
-                await api.post("/register", { username, password, email });
+                await api.post("/register", { 
+                    username: username, 
+                    password: password, 
+                    email: email, 
+                });
                 return true;
             } catch (error) {
                 console.error("Failed to register: ", error);

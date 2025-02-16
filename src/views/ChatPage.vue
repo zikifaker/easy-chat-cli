@@ -2,7 +2,7 @@
   <div class="chat-container">
     <Sidebar @selectSession="loadChatSession" />
     <div class="chat-main">
-      <ChatHeader />
+      <ChatHeader @updateModel="setModel" />
       <ChatMessages :messages="messages" />
       <ChatInput @sendMessage="sendMessage" />
     </div>
@@ -12,18 +12,19 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useChatStore } from "@/stores/chatStore";
+import { useChatStore } from "@/store/chatStore";
 import Sidebar from "@/components/SideBar.vue";
 import ChatHeader from "@/components/ChatHeader.vue";
 import ChatMessages from "@/components/ChatMessages.vue";
 import ChatInput from "@/components/ChatInput.vue";
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/store/userStore";
 
 const route = useRoute();
 const router = useRouter();
 const chatStore = useChatStore();
 const userStore = useUserStore();
 const messages = ref([]);
+const selectedModel = ref('qwen-plus');
 
 watch(
   () => route.params.session_id,
@@ -56,12 +57,17 @@ const sendMessage = async (message) => {
       username: userStore.username,
       sessionID: route.params.session_id,
       message: message,
+      model: selectedModel.value,
     };
 
     await chatStore.sendChatRequest(chatRequest);
   } catch (error) {
     console.error("Error sending message:", error);
   }
+};
+
+const setModel = (model) => {
+  selectedModel.value = model;
 };
 </script>
 

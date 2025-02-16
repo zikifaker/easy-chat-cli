@@ -24,7 +24,9 @@ export const useChatStore = defineStore("chat", {
         },
 
         async createSession(username) {
-            const res = await api.post("/chat-session", { username });
+            const res = await api.post("/chat-session", {
+                username: username,
+            });
             const newSession = res.data;
             this.sessions.unshift(newSession);
             this.messages[newSession.session_id] = [];
@@ -45,7 +47,7 @@ export const useChatStore = defineStore("chat", {
             return this.messages[sessionID];
         },
 
-        async sendChatRequest({ username, sessionID, message}) {
+        async sendChatRequest({ username, sessionID, message, model }) {
             if (!this.messages[sessionID]) {
                 this.messages[sessionID] = [];
             }
@@ -64,18 +66,17 @@ export const useChatStore = defineStore("chat", {
                         username: username,
                         session_id: sessionID,
                         query: message,
-                        model: "deepseek-v3",
+                        model: model,
                     })
                 });
-
                 if (!response.ok) {
                     throw new Error(`HTTP request failed with status code: ${response.status}`);
                 }
 
                 await this.parseSSEStream(response.body, sessionID);
-
             } catch (error) {
-                this.handleError(sessionID, error);
+                console.error('Send request Error:', error)
+                this.addErrorMessage(sessionID);
             }
         },
 
@@ -128,7 +129,6 @@ export const useChatStore = defineStore("chat", {
                     }
                 });
             } else if (event === 'error') {
-                console.error('SSE Error:', data);
                 throw new Error(data);
             } else {
                 console.warn('Unknown event type:', event);
@@ -149,12 +149,11 @@ export const useChatStore = defineStore("chat", {
             });
         },
 
-        handleError(sessionID, error) {
+        addErrorMessage(sessionID) {
             this.messages[sessionID].push({
                 message_type: 'ai',
                 content: '消息发送失败，请重试',
             });
-            console.error('Error:', error);
         },
     }
 });

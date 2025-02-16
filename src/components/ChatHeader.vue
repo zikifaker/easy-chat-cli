@@ -1,6 +1,8 @@
 <template>
   <div class="chat-header">
-    <h2>Easy Chat</h2>
+    <select v-model="selectedModel" @change="updateModel" class="model-selector">
+      <option v-for="option in modelOptions" :key="option" :value="option">{{ option }}</option>
+    </select>
     <div class="user-menu">
       <div class="user-icon" @click="toggleDropdown">
         <img :src="userAvatar" alt="用户" />
@@ -18,14 +20,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, defineEmits } from 'vue';
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/store/userStore";
 
 const router = useRouter();
 const userStore = useUserStore();
 const showDropdown = ref(false);
 const userAvatar = "/default-avatar.png";
+
+const emit = defineEmits(["setModel"]);
+const modelOptions = ['qwen-plus', 'qwen-max', 'deepseek-v3'];
+const selectedModel = ref(modelOptions[0]);
 
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
@@ -40,6 +46,10 @@ const closeDropdown = (e) => {
   if (!e.target.closest('.user-menu')) {
     showDropdown.value = false;
   }
+};
+
+const updateModel = () => {
+  emit("updateModel", selectedModel.value);
 };
 
 onMounted(() => {
@@ -63,10 +73,18 @@ onUnmounted(() => {
   height: 40px;
 }
 
-h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 500;
+.model-selector-container {
+  display: flex;
+  align-items: center;
+}
+
+.model-selector {
+  padding: 8px 12px;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
 }
 
 .user-icon {

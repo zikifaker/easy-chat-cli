@@ -22,7 +22,7 @@
 
 <script setup>
 import { computed } from "vue";
-import { useChatStore } from "@/stores/chatStore";
+import { useChatStore } from "@/store/chatStore";
 import { useRoute, useRouter } from "vue-router";
 
 const chatStore = useChatStore();

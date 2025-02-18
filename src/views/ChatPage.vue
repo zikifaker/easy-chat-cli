@@ -46,7 +46,7 @@ onMounted(async () => {
   await chatStore.getSessions(userStore.username);
 });
 
-const sendMessage = async (message) => {
+const sendMessage = async (message, mode) => {
   try {
     if (!route.params.session_id) {
       const session = await chatStore.createSession(userStore.username);
@@ -58,6 +58,7 @@ const sendMessage = async (message) => {
       sessionID: route.params.session_id,
       message: message,
       model: selectedModel.value,
+      mode: mode,
     };
 
     await chatStore.sendChatRequest(chatRequest);

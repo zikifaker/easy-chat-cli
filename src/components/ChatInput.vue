@@ -3,6 +3,14 @@
     <div class="chat-input">
       <textarea v-model="message" @keydown.enter.prevent="handleEnter" @input="adjustHeight" ref="textarea"
         placeholder="输入消息..." rows="1"></textarea>
+      <div class="mode-selector">
+        <button class="mode-button" :class="{ active: selectedMode === 'normal' }" @click="selectMode('normal')">
+          normal
+        </button>
+        <button class="mode-button" :class="{ active: selectedMode === 'agent' }" @click="selectMode('agent')">
+          agent
+        </button>
+      </div>
       <button @click="send" :disabled="!message.trim()">
         <svg viewBox="0 0 24 24">
           <path fill="currentColor" d="M2 21l21-9L2 3v7l15 2l-15 2v7Z" />
@@ -13,16 +21,17 @@
 </template>
 
 <script setup>
-import { defineEmits, ref } from "vue";
+import { ref, defineEmits } from "vue";
 
 const message = ref("");
 const textarea = ref(null);
+const selectedMode = ref("normal");
 const emit = defineEmits(["sendMessage"]);
 
 const adjustHeight = () => {
   const el = textarea.value;
-  el.style.height = 'auto';
-  el.style.height = el.scrollHeight + 'px';
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
 };
 
 const handleEnter = (e) => {
@@ -32,12 +41,16 @@ const handleEnter = (e) => {
   send();
 };
 
+const selectMode = (mode) => {
+  selectedMode.value = mode;
+};
+
 const send = () => {
   if (message.value.trim()) {
-    emit("sendMessage", message.value);
+    emit("sendMessage", message.value, selectedMode.value);
     message.value = "";
     if (textarea.value) {
-      textarea.value.style.height = 'auto';
+      textarea.value.style.height = "auto";
     }
   }
 };
@@ -55,24 +68,34 @@ const send = () => {
   display: flex;
   max-width: 768px;
   margin: 0 auto;
-  background: #F9F9F9; 
-  border: 1px solid #E0E0E0; 
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   align-items: center;
   padding: 12px 20px;
 }
 
-.model-selector {
-  padding: 8px 12px;
-  border: 1px solid #D1D1D1;
+.mode-selector {
+  display: flex;
+  gap: 10px;
+  margin-right: 10px;
+}
+
+.mode-button {
+  padding: 5px 10px;
+  border: 1px solid #d1d1d1;
   background: transparent;
   color: var(--text-color);
   font-size: 14px;
   border-radius: 20px;
-  outline: none;
-  margin-right: 10px;
   cursor: pointer;
+  outline: none;
+}
+
+.mode-button.active {
+  background-color: #42b983;
+  color: white;
 }
 
 textarea {
@@ -92,14 +115,14 @@ textarea {
 }
 
 textarea::placeholder {
-  color: #B0B0B0; 
+  color: #b0b0b0;
 }
 
 button {
   padding: 8px 12px;
   background: var(--primary-color);
   border: none;
-  border-radius: 20px; 
+  border-radius: 20px;
   color: white;
   cursor: pointer;
   transition: background-color 0.2s;

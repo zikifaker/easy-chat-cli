@@ -47,7 +47,7 @@ export const useChatStore = defineStore("chat", {
             return this.messages[sessionID];
         },
 
-        async sendChatRequest({ username, sessionID, message, model }) {
+        async sendChatRequest({ username, sessionID, message, model, mode }) {
             if (!this.messages[sessionID]) {
                 this.messages[sessionID] = [];
             }
@@ -60,13 +60,14 @@ export const useChatStore = defineStore("chat", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     },
                     body: JSON.stringify({
                         username: username,
                         session_id: sessionID,
                         query: message,
                         model: model,
+                        mode: mode,
                     })
                 });
                 if (!response.ok) {
@@ -120,7 +121,7 @@ export const useChatStore = defineStore("chat", {
         },
 
         processEvent(event, data, sessionID) {
-            if (event === 'chunk') {
+            if (event === 'result') {
                 this.$patch((state) => {
                     const sessionMessages = state.messages[sessionID];
                     const lastMessage = sessionMessages[sessionMessages.length - 1];

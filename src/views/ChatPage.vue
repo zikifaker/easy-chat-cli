@@ -75,7 +75,7 @@ const setModel = (model) => {
 <style scoped>
 .chat-container {
   display: flex;
-  height: 100%;
+  height: 100vh;
   background: var(--background-color);
 }
 

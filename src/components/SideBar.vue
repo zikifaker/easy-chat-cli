@@ -24,6 +24,7 @@
 import { computed } from "vue";
 import { useChatStore } from "@/store/chatStore";
 import { useRoute, useRouter } from "vue-router";
+import Swal from "sweetalert2"; // 引入 SweetAlert2
 
 const chatStore = useChatStore();
 const router = useRouter();
@@ -41,13 +42,38 @@ const createNewChat = () => {
 };
 
 const deleteSession = async (sessionID) => {
-  try {
-    await chatStore.deleteSession(sessionID);
-    if (activeSessionID.value === sessionID) {
-      router.push('/chat');
+  const result = await Swal.fire({
+    title: "永久删除会话",
+    text: "本条会话数据将被永久删除，确定要删除吗？",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "删除",
+    cancelButtonText: "取消",
+    reverseButtons: true
+  });
+
+  if (result.isConfirmed) {
+    try {
+      await chatStore.deleteSession(sessionID);
+      if (activeSessionID.value === sessionID) {
+        router.push('/chat');
+      }
+      Swal.fire({
+        title: "删除成功",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      console.error('Failed to delete session:', error);
+      Swal.fire({
+        title: "删除失败",
+        text: "请稍后再试",
+        icon: "error",
+        timer: 1500,
+        showConfirmButton: false
+      });
     }
-  } catch (error) {
-    console.error('Failed to delete session:', error);
   }
 };
 </script>

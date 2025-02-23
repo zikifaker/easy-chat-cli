@@ -11,12 +11,7 @@ export const useChatStore = defineStore("chat", {
         async getSessions(username) {
             try {
                 const res = await api.get(`/chat-session/${username}`);
-                if (Array.isArray(res.data)) {
-                    this.sessions = res.data;
-                } else {
-                    console.error('Invalid sessions data format:', res.data);
-                    this.sessions = [];
-                }
+                this.sessions = res.data;
             } catch (error) {
                 console.error('Failed to get sessions:', error);
                 this.sessions = [];
@@ -153,7 +148,7 @@ export const useChatStore = defineStore("chat", {
         addErrorMessage(sessionID) {
             this.messages[sessionID].push({
                 message_type: 'ai',
-                content: '消息发送失败，请重试',
+                content: '服务器错误，请稍后重试',
             });
         },
     }
